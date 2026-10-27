@@ -1,0 +1,13 @@
+<report>
+  <machines count="9"/>
+  <workOrders count="45">
+    <unfinished priority="LOW" count="1"/>
+    <unfinished priority="HIGH" count="3"/>
+    <unfinished priority="NORMAL" count="1"/>
+  </workOrders>
+  <topBreakdownMachines>
+    <machine id="M-04" breakdowns="4"/>
+    <machine id="M-05" breakdowns="3"/>
+    <machine id="M-06" breakdowns="3"/>
+  </topBreakdownMachines>
+</report>

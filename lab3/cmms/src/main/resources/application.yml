@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: cmms
+
+cmms:
+  report:
+    ranking-limit: 3
+    file-path: "reports/output/raport.txt"
