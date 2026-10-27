@@ -2,8 +2,8 @@
   <machines count="9"/>
   <workOrders count="45">
     <unfinished priority="LOW" count="1"/>
-    <unfinished priority="HIGH" count="3"/>
     <unfinished priority="NORMAL" count="1"/>
+    <unfinished priority="HIGH" count="3"/>
   </workOrders>
   <topBreakdownMachines>
     <machine id="M-04" breakdowns="4"/>

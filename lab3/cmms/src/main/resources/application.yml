@@ -5,4 +5,4 @@ spring:
 cmms:
   report:
     ranking-limit: 3
-    file-path: "reports/output/raport.txt"
+    file-path: "reports/output/raport.xml"
