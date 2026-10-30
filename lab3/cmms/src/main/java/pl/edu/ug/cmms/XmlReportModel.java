@@ -6,7 +6,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.List;
 
 @JsonRootName("report")
-public record ReportXML(
+public record XmlReportModel(
         MachinesInfo machines,
         WorkOrdersInfo workOrders,
         @JacksonXmlElementWrapper(localName = "topBreakdownMachines")

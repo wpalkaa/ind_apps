@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
-public class ReportRunner implements ApplicationRunner {
+public class XmlReportJobRunner implements ApplicationRunner {
     
     private final Tasks tasks;
     private final List<Machine> machines;
@@ -16,7 +16,7 @@ public class ReportRunner implements ApplicationRunner {
     private final int topBreakdownMachinesLimit;
     private final String filePath;
 
-    public ReportRunner(
+    public XmlReportJobRunner(
         Tasks tasks,
         List<Machine> machines,
         List<WorkOrder> workOrders,
@@ -45,29 +45,29 @@ public class ReportRunner implements ApplicationRunner {
         }
 
 
-        List<ReportXML.PriorityCountXml> unfinishedXml = countUnfinishedOrders.entrySet().stream()
-                .map(e -> new ReportXML.PriorityCountXml(e.getKey(), e.getValue()))
+        List<XmlReportModel.PriorityCountXml> unfinishedXml = countUnfinishedOrders.entrySet().stream()
+                .map(e -> new XmlReportModel.PriorityCountXml(e.getKey(), e.getValue()))
                 .toList();
 
-        List<ReportXML.MachineBreakdownXml> breakdownXml = topMachines.stream()
+        List<XmlReportModel.MachineBreakdownXml> breakdownXml = topMachines.stream()
                 .map(machine -> {
                     long breakdowns = workOrders.stream()
                             .filter(wo -> wo.machineId().equals(machine.id())
                                     && wo.type() == WorkOrder.WorkOrderType.BREAKDOWN
                                     && wo.status() == WorkOrder.WorkOrderStatus.DONE)
                             .count();
-                    return new ReportXML.MachineBreakdownXml(machine.id(), breakdowns);
+                    return new XmlReportModel.MachineBreakdownXml(machine.id(), breakdowns);
                 })
                 .toList();
 
-        ReportXML report = new ReportXML(
-                new ReportXML.MachinesInfo(machines.size()),
-                new ReportXML.WorkOrdersInfo(workOrders.size(), unfinishedXml),
+        XmlReportModel report = new XmlReportModel(
+                new XmlReportModel.MachinesInfo(machines.size()),
+                new XmlReportModel.WorkOrdersInfo(workOrders.size(), unfinishedXml),
                 breakdownXml
         );
 
         Path targetPath = Path.of(filePath);
-        XMLReport.saveToFile(targetPath, report);
+        XmlReportWriter.saveToFile(targetPath, report);
         System.out.println("\nZapisano raport XML do pliku: " + targetPath.toAbsolutePath());
     }
 }
