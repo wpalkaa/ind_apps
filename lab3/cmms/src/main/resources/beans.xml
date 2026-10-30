@@ -9,7 +9,7 @@
 
     <bean id="tasks" class="pl.edu.ug.cmms.Tasks"/>
 
-    <bean id="reportRunner" class="pl.edu.ug.cmms.ReportRunner">
+    <bean id="reportRunner" class="pl.edu.ug.cmms.XmlReportJobRunner">
         <constructor-arg ref="tasks"/>
         <constructor-arg ref="machines"/>
         <constructor-arg ref="workOrders"/>
