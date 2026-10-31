@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: cmms
+
+cmms:
+  report:
+    ranking-limit: 3
+    file-path: "reports/output/raport.xml"
+  sla:
+    critical: 4h
+    high: 16h
+    normal: 36h
+    low: 264h
