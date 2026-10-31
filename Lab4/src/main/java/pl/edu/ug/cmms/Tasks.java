@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component 
 public class Tasks {
 
-    private Tasks() {}
+    public Tasks() {}
     
     public Map<Priority, Long> countUnfinishedOrders(List<WorkOrder> orders) {
         return orders.stream()

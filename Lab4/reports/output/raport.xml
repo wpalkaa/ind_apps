@@ -12,7 +12,7 @@
   </topBreakdownMachines>
   <slaExceededBreakdowns>
     <exceeded priority="HIGH" count="3"/>
-    <exceeded priority="CRITICAL" count="2"/>
     <exceeded priority="NORMAL" count="2"/>
+    <exceeded priority="CRITICAL" count="2"/>
   </slaExceededBreakdowns>
 </report>
