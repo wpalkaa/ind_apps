@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Teraz metoda fabryczna to Albums.fromXml; constructor-arg w beanie z factory-method
+         jest argumentem tej metody, a nie konstruktora: Spring wywoła Albums.fromXml("albums.xml") -->
+    <bean id="albums" class="pl.edu.ug.vinyl.Albums" factory-method="fromXml">
+        <constructor-arg value="${vinyl.albums-file}"/>
+    </bean>
+
+    <!-- Bean shelf bez zmian -->
+    <bean id="shelf" class="pl.edu.ug.vinyl.Shelf">
+        <constructor-arg value="${vinyl.owner}"/>
+        <constructor-arg ref="albums"/>
+    </bean>
+</beans>

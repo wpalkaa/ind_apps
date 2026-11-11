@@ -4,8 +4,10 @@ import pl.edu.ug.cmms.WorkOrder.Priority;
 import pl.edu.ug.cmms.WorkOrder.WorkOrderStatus;
 import pl.edu.ug.cmms.WorkOrder.WorkOrderType;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -27,6 +29,25 @@ public class Main {
             System.out.println("  " + (i + 1) + ". " + top3.get(i));
         }
         
+
+        System.out.println("## MTTR hal");
+        Map<String, String> hallByMachine = machines.stream()
+            .collect(Collectors.toMap(Machine::id, Machine::hall));
+
+        Map<String, Duration> mttrByHall = orders.stream()
+            .filter(order -> order.type() == WorkOrderType.BREAKDOWN)
+            .filter(order -> order.status() == WorkOrderStatus.DONE)
+            .collect(Collectors.groupingBy(
+                order -> hallByMachine.get(order.machineId()),
+                TreeMap::new,
+                Collectors.collectingAndThen(
+                    Collectors.averagingLong(order ->
+                        Duration.between(order.reportedAt(), order.closedAt()).getSeconds()),
+                    avgSeconds -> Duration.ofSeconds(Math.round(avgSeconds))
+                )
+            ));
+        mttrByHall.forEach((hall, mttr) ->
+            System.out.println("  " + hall + ": " + mttr.toHours() + "h " + mttr.toMinutesPart() + "min"));
     }
 
     public static Map<Priority, Long> countUnfinishedOrders(List<WorkOrder> orders) {

@@ -1,0 +1,13 @@
+spring:
+  main:
+    # Wyłącza logo Springa przy starcie; bez tego logo trafiłoby do wyniku programu
+    banner-mode: off
+logging:
+  level:
+    # Na ekran trafiają tylko ostrzeżenia i błędy; bez tego logi Springa zasłoniłyby wynik programu
+    root: warn
+
+vinyl:
+  owner: Alice
+  # Nazwa pliku z danymi: właściwość vinyl.albums-file
+  albums-file: albums.xml

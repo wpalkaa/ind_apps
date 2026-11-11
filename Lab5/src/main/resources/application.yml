@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: cmms
+  main:
+    banner-mode: off
+  http:
+    clients:
+      connect-timeout: 2s
+      read-timeout: 2s
+
+cmms:
+  report:
+    ranking-limit: 3
+    file-path: "reports/output/raport.xml"
+  sla:
+    critical: 4h
+    high: 16h
+    normal: 36h
+    low: 264h
+  import:
+    machines-file: "data/new_machines.csv"
+  vendor:
+    base-url: "http://localhost:8090"
