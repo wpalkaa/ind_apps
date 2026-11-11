@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -122,7 +123,7 @@ public class ReportRunner implements ApplicationRunner {
         System.out.println("\nZapisano raport XML do pliku: " + targetPath.toAbsolutePath());
 
 
-        ImportResult importResult = readMachinesData.readMachines(topMachines);
+        ImportResult importResult = readMachinesData.readMachines(machines);
         System.out.println("\n## Przyjęte wiersze: ##");
         List<Machine> acceptedMachines = importResult.acceptedMachines();
         for( Machine m : acceptedMachines ) {
@@ -140,7 +141,7 @@ public class ReportRunner implements ApplicationRunner {
 
 
         System.out.println("\n## Plany z usługi producenta:");
-        List<Machine.MachineType> plantTypes = acceptedMachines.stream()
+        List<Machine.MachineType> plantTypes = machines.stream()
             .map(Machine::type)
             .distinct()
             .toList();
