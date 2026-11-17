@@ -1,6 +1,7 @@
-package pl.edu.ug.cmms;
+package pl.edu.ug.cmms.importer;
 
 import java.util.List;
+import pl.edu.ug.cmms.domain.Machine;
 
 public record ImportResult(
     List<Machine> acceptedMachines,

@@ -1,4 +1,4 @@
-package pl.edu.ug.cmms;
+package pl.edu.ug.cmms.report;
 
 import java.io.IOException;
 import java.nio.file.Files;

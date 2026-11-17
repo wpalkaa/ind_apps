@@ -1,9 +1,10 @@
-package pl.edu.ug.cmms;
+package pl.edu.ug.cmms.report;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.List;
+import pl.edu.ug.cmms.domain.WorkOrder;
 
 @JsonRootName("report")
 public record ReportXML(

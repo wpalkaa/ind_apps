@@ -1,4 +1,4 @@
-package pl.edu.ug.cmms;
+package pl.edu.ug.cmms.importer;
 
 public record RejectedRow(
     int lineNumber,

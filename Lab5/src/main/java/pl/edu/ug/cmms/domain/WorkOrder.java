@@ -1,4 +1,4 @@
-package pl.edu.ug.cmms;
+package pl.edu.ug.cmms.domain;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -33,13 +33,13 @@ public record WorkOrder(
     }
 
     public WorkOrder {
-        if( id == null || id.isEmpty() ) {
+        if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("ID jest niepoprawne");
         }
-        if( status == WorkOrderStatus.DONE && closedAt == null ) {
+        if (status == WorkOrderStatus.DONE && closedAt == null) {
             throw new IllegalArgumentException("Zlecenie DONE musi mieć datę zamknięcia");
         }
-        if( closedAt != null && closedAt.isBefore(reportedAt)) {
+        if (closedAt != null && closedAt.isBefore(reportedAt)) {
             throw new IllegalArgumentException("Data zamkniecia nie moze byc wcześniejsza niż zgłosznia");
         }
         Objects.requireNonNull(type, "Typ zlecenia nie może być null.");

@@ -1,4 +1,4 @@
-package pl.edu.ug.cmms;
+package pl.edu.ug.cmms.client;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

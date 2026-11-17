@@ -1,4 +1,4 @@
-package pl.edu.ug.cmms;
+package pl.edu.ug.cmms.importer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +9,9 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import pl.edu.ug.cmms.config.SampleData;
+import pl.edu.ug.cmms.domain.Machine;
 
 import static org.junit.jupiter.api.Assertions.*;
 

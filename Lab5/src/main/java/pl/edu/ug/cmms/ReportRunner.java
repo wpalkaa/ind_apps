@@ -14,6 +14,16 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
+import pl.edu.ug.cmms.analysis.Tasks;
+import pl.edu.ug.cmms.client.VendorClient;
+import pl.edu.ug.cmms.domain.Machine;
+import pl.edu.ug.cmms.domain.WorkOrder;
+import pl.edu.ug.cmms.importer.ImportResult;
+import pl.edu.ug.cmms.importer.ReadMachinesData;
+import pl.edu.ug.cmms.importer.RejectedRow;
+import pl.edu.ug.cmms.report.ReportXML;
+import pl.edu.ug.cmms.report.XMLReport;
+
 @Component 
 public class ReportRunner implements ApplicationRunner {
     
@@ -59,7 +69,7 @@ public class ReportRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws IOException {
-        // import maszyn z CSV przy starcie i dołączenie poprawnych maszyn do maszyn zakładu
+        // 1. Import maszyn z CSV przy starcie i dołączenie poprawnych maszyn do maszyn zakładu
         ImportResult importResult = readMachinesData.readMachines(machines);
         machines.addAll(importResult.acceptedMachines());
 

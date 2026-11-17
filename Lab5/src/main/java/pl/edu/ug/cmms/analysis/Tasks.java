@@ -1,8 +1,4 @@
-package pl.edu.ug.cmms;
-
-import pl.edu.ug.cmms.WorkOrder.Priority;
-import pl.edu.ug.cmms.WorkOrder.WorkOrderStatus;
-import pl.edu.ug.cmms.WorkOrder.WorkOrderType;
+package pl.edu.ug.cmms.analysis;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -11,6 +7,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
+
+import pl.edu.ug.cmms.domain.Machine;
+import pl.edu.ug.cmms.domain.WorkOrder;
+import pl.edu.ug.cmms.domain.WorkOrder.Priority;
+import pl.edu.ug.cmms.domain.WorkOrder.WorkOrderStatus;
+import pl.edu.ug.cmms.domain.WorkOrder.WorkOrderType;
 
 @Component 
 public class Tasks {

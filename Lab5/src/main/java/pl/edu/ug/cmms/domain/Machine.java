@@ -1,4 +1,4 @@
-package pl.edu.ug.cmms;
+package pl.edu.ug.cmms.domain;
 
 import java.time.LocalDate;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package pl.edu.ug.cmms;
+package pl.edu.ug.cmms.analysis;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,9 +8,12 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.ug.cmms.WorkOrder.Priority;
-import pl.edu.ug.cmms.WorkOrder.WorkOrderStatus;
-import pl.edu.ug.cmms.WorkOrder.WorkOrderType;
+
+import pl.edu.ug.cmms.config.SampleData;
+import pl.edu.ug.cmms.domain.WorkOrder;
+import pl.edu.ug.cmms.domain.WorkOrder.Priority;
+import pl.edu.ug.cmms.domain.WorkOrder.WorkOrderStatus;
+import pl.edu.ug.cmms.domain.WorkOrder.WorkOrderType;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -80,7 +83,6 @@ class TasksTest {
     @Test
     @DisplayName("Punkt 3: Powinien wyszukiwać niezakończone zlecenia otwarte dłużej niż limit SLA z zegarem o stałej chwili")
     void shouldFindUnfinishedOrdersExceedingSlaUsingFixedClockAndMockedDataSource() {
-        // Zegar ustawiony na stałą chwilę demonstracyjną (2026-09-21 06:00:00)
         LocalDateTime fixedInstant = LocalDateTime.parse("2026-09-21T06:00:00");
         Clock fixedClock = Clock.fixed(fixedInstant.atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
         LocalDateTime now = LocalDateTime.now(fixedClock);
@@ -125,9 +127,9 @@ class TasksTest {
 
         List<WorkOrder> sampleOrders = List.of(
                 new WorkOrder("WO-S1", "M-01", WorkOrderType.BREAKDOWN, Priority.CRITICAL, WorkOrderStatus.DONE,
-                        fixedInstant.minusHours(10), fixedInstant.minusHours(5)), // trwała 5h > 4h -> przekroczona
+                        fixedInstant.minusHours(10), fixedInstant.minusHours(5)),
                 new WorkOrder("WO-S2", "M-02", WorkOrderType.BREAKDOWN, Priority.HIGH, WorkOrderStatus.OPEN,
-                        fixedInstant.minusHours(20), null) // trwa 20h > 16h -> przekroczona
+                        fixedInstant.minusHours(20), null)
         );
 
         try (MockedStatic<SampleData> sampleDataMock = Mockito.mockStatic(SampleData.class)) {
