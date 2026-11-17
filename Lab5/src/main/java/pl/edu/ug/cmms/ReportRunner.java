@@ -7,7 +7,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -32,8 +31,8 @@ public class ReportRunner implements ApplicationRunner {
         Tasks tasks,
         List<Machine> machines,
         List<WorkOrder> workOrders,
-        @Value("${cmms.report.ranking-limit:3}")int topBreakdownMachinesLimit,
-        @Value("${cmms.report.file-path:raport.xml}")String filePath,
+        @Value("${cmms.report.ranking-limit:3}") int topBreakdownMachinesLimit,
+        @Value("${cmms.report.file-path:raport.xml}") String filePath,
         @Value("${cmms.sla.critical:4h}") Duration slaCritical,
         @Value("${cmms.sla.high:16h}") Duration slaHigh,
         @Value("${cmms.sla.normal:36h}") Duration slaNormal,
@@ -60,15 +59,35 @@ public class ReportRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws IOException {
-        System.out.println("## Niezakończone zlecenia wg priorytetu:");
+        // import maszyn z CSV przy starcie i dołączenie poprawnych maszyn do maszyn zakładu
+        ImportResult importResult = readMachinesData.readMachines(machines);
+        machines.addAll(importResult.acceptedMachines());
+
+        System.out.println("## Podsumowanie importu maszyn z pliku CSV:");
+        System.out.println("  Liczba przyjętych: " + importResult.acceptedCount());
+        System.out.println("  Liczba odrzuconych: " + importResult.rejectedCount());
+
+        if (!importResult.acceptedMachines().isEmpty()) {
+            System.out.println("\n## Przyjęte wiersze (dołączone do zakładu):");
+            for (Machine m : importResult.acceptedMachines()) {
+                System.out.println("  - " + m);
+            }
+        }
+
+        if (!importResult.rejectedRows().isEmpty()) {
+            System.out.println("\n## Odrzucone wiersze:");
+            for (RejectedRow r : importResult.rejectedRows()) {
+                System.out.println("  - Linia " + r.lineNumber() + ": " + r.reason() + " [" + r.rawLine() + "]");
+            }
+        }
+
+        System.out.println("\n## Niezakończone zlecenia wg priorytetu:");
         Map<WorkOrder.Priority, Long> countUnfinishedOrders = tasks.countUnfinishedOrders(workOrders);
-        countUnfinishedOrders.forEach((p, c) -> System.err.println("  " + p + ": " + c));
+        countUnfinishedOrders.forEach((p, c) -> System.out.println("  " + p + ": " + c));
 
-        System.out.println();
-
-        System.out.println("## 3 maszyny z największą liczbą awarii:");
+        System.out.println("\n## 3 maszyny z największą liczbą awarii:");
         List<Machine> topMachines = tasks.topBreakdownMachines(workOrders, machines, topBreakdownMachinesLimit);
-       for (int i = 0; i < topMachines.size(); i++) {
+        for (int i = 0; i < topMachines.size(); i++) {
             System.out.println("  " + (i + 1) + ". " + topMachines.get(i));
         }
 
@@ -77,7 +96,6 @@ public class ReportRunner implements ApplicationRunner {
         for (WorkOrder.Priority priority : WorkOrder.Priority.values()) {
             System.out.println("  " + priority + ": " + slaExceeded.getOrDefault(priority, 0L));
         }
-
 
         LocalDateTime now = LocalDateTime.now(clock);
         List<WorkOrder> overdueUnfinished = tasks.unfinishedOrdersExceedingSla(workOrders, slaLimits, now);
@@ -89,8 +107,6 @@ public class ReportRunner implements ApplicationRunner {
             System.out.println("  " + order.id() + " [" + order.priority() + "]: otwarte od " 
                 + order.reportedAt() + " (trwa " + elapsed.toHours() + "h, limit: " + limit.toHours() + "h)");
         }
-
-
 
         List<ReportXML.PriorityCountXml> unfinishedXml = countUnfinishedOrders.entrySet().stream()
             .map(e -> new ReportXML.PriorityCountXml(e.getKey(), e.getValue()))
@@ -122,40 +138,22 @@ public class ReportRunner implements ApplicationRunner {
         XMLReport.saveToFile(targetPath, report);
         System.out.println("\nZapisano raport XML do pliku: " + targetPath.toAbsolutePath());
 
-
-        ImportResult importResult = readMachinesData.readMachines(machines);
-        System.out.println("\n## Przyjęte wiersze: ##");
-        List<Machine> acceptedMachines = importResult.acceptedMachines();
-        for( Machine m : acceptedMachines ) {
-            System.out.println("  - " + m);
-        }
-        System.out.println("  - (" + importResult.acceptedCount() + ")");
-        
-        System.out.println("\n## Odrzucone wiersze: ##");
-        List<RejectedRow> rejectedRows = importResult.rejectedRows();
-        for( RejectedRow r : rejectedRows ) {
-            System.out.println("  - " + r.rawLine() + " => " + r.reason());
-        }
-        System.out.println("  - (" + importResult.rejectedCount() + ")");
-
-
-
         System.out.println("\n## Plany z usługi producenta:");
         List<Machine.MachineType> plantTypes = machines.stream()
             .map(Machine::type)
             .distinct()
             .toList();
 
-        for( Machine.MachineType t : plantTypes ) {
+        for (Machine.MachineType t : plantTypes) {
             String status;
             try {
                 status = vendorClient.plan(t)
                     .map(plan -> plan.preventiveIntervalDays() + " dni")
-                    .orElse("brak w katalogu");
+                    .orElse("brak typu w katalogu");
             } catch (RestClientException e) {
                 status = "usługa niedostępna";
             }
-            System.out.println(" " + t + ": " + status);
+            System.out.println("  " + t + ": " + status);
         }
     }
 }

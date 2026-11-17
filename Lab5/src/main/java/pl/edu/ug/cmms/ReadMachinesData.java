@@ -19,32 +19,39 @@ public class ReadMachinesData {
 
     private final Path file;
 
-    public ReadMachinesData(@Value ("${cmms.import.machines-file}") Path file) {
+    public ReadMachinesData(@Value("${cmms.import.machines-file}") Path file) {
         this.file = file;
     }
 
     public ImportResult readMachines(List<Machine> existingMachines) throws IOException {
-        List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+        return readMachines(this.file, existingMachines);
+    }
+
+    public ImportResult readMachines(Path filePath, List<Machine> existingMachines) throws IOException {
+        List<String> lines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
         Set<String> machinesId = new HashSet<>();
         
-        for( Machine m : existingMachines ) {
-            machinesId.add(m.id());
+        if (existingMachines != null) {
+            for (Machine m : existingMachines) {
+                machinesId.add(m.id());
+            }
         }
 
-        Set<String> seenIds = new HashSet<>();
+        Set<String> seenFileIds = new HashSet<>();
         List<Machine> acceptedRows = new ArrayList<>();
         List<RejectedRow> rejectedRows = new ArrayList<>();
 
-        for(int i=1; i < lines.size(); i++) {
+        for (int i = 1; i < lines.size(); i++) {
+            int lineNumber = i + 1;
             String line = lines.get(i).trim();
-            if( line.isEmpty() ) {
-                rejectedRows.add(new RejectedRow(i, "Empty line", line));
+            if (line.isEmpty()) {
+                rejectedRows.add(new RejectedRow(lineNumber, "Pusta linia", line));
                 continue;
             }
 
             String[] fields = line.split(";");
-            if( fields.length < 5 ) {
-                rejectedRows.add(new RejectedRow(i, "Wrong line format", line));
+            if (fields.length < 5) {
+                rejectedRows.add(new RejectedRow(lineNumber, "Niepoprawny format wiersza (wymagane 5 kolumn)", line));
                 continue;
             }
 
@@ -54,12 +61,12 @@ public class ReadMachinesData {
             String hall = fields[3].trim();
             String installedOnStr = fields[4].trim();
 
-            if( machinesId.contains(id) ) {
-                rejectedRows.add(new RejectedRow(i, "ID already exists", line));
+            if (machinesId.contains(id)) {
+                rejectedRows.add(new RejectedRow(lineNumber, "Identyfikator już istnieje w zakładzie (" + id + ")", line));
                 continue;
             }
-            if( seenIds.contains(id) ) {
-                rejectedRows.add(new RejectedRow(i, "ID was already read", line));
+            if (seenFileIds.contains(id)) {
+                rejectedRows.add(new RejectedRow(lineNumber, "Identyfikator pojawił się już wcześniej w pliku (" + id + ")", line));
                 continue;
             }
 
@@ -67,7 +74,7 @@ public class ReadMachinesData {
             try {
                 type = Machine.MachineType.valueOf(typeStr);
             } catch (IllegalArgumentException e) {
-                rejectedRows.add(new RejectedRow(i, "Unknown machine type", line));
+                rejectedRows.add(new RejectedRow(lineNumber, "Nieznany typ maszyny: " + typeStr, line));
                 continue;
             }
 
@@ -75,11 +82,11 @@ public class ReadMachinesData {
             try {
                 installedOn = LocalDate.parse(installedOnStr);
             } catch (DateTimeParseException e) {
-                rejectedRows.add(new RejectedRow(i, "Wrong date format", line));
+                rejectedRows.add(new RejectedRow(lineNumber, "Niepoprawny format daty: " + installedOnStr, line));
                 continue;
             }
 
-            seenIds.add(id);
+            seenFileIds.add(id);
             acceptedRows.add(new Machine(id, name, type, hall, installedOn));
         }   
 

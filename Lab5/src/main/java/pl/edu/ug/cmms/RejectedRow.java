@@ -1,8 +1,11 @@
 package pl.edu.ug.cmms;
 
 public record RejectedRow(
-    int lineIndex,
+    int lineNumber,
     String reason,
     String rawLine
 ) {
+    public int lineIndex() {
+        return lineNumber;
+    }
 }

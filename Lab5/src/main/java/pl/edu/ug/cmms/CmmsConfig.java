@@ -3,6 +3,7 @@ package pl.edu.ug.cmms;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,7 @@ public class CmmsConfig {
     
     @Bean
     public List<Machine> machines() {
-        return SampleData.machines();
+        return new ArrayList<>(SampleData.machines());
     }
 
     @Bean

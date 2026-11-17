@@ -1,8 +1,10 @@
 package pl.edu.ug.cmms;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record MaintenancePlan(
-    String MachineType,
-    int inspectionIntervalDays,
-    int preventiveIntervalDays
+    @JsonProperty("machineType") String machineType,
+    @JsonProperty("inspectionIntervalDays") int inspectionIntervalDays,
+    @JsonProperty("preventiveIntervalDays") int preventiveIntervalDays
 ) {
 }
